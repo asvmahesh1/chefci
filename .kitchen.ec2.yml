@@ -1,0 +1,45 @@
+driver:
+  name: ec2
+  region: us-east-1
+  require_chef_omnibus: true
+  aws_ssh_key_id: kitchen-linux
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: amazon
+    driver:
+      image_search:
+        name: "AE LINUX BASE 2017*"
+      block_device_mappings:
+        - device_name: /dev/xvda
+          ebs:
+            volume_type: standard
+            volume_size: 100
+            delete_on_termination: true
+      tags:
+        Name: test-kitchen-jenkins
+        Owner: Kevin Keeler
+        Application ID: ami-bakery
+        Application Role: jenkins
+        Business Unit: Cloud Services
+        Environment: Production
+        Financial": Enterprise
+        Project: "Chef E2E"
+        Security: "Sensitive"
+        Automation: "None"
+
+    transport:
+      username: ec2-user
+      ssh_key: ../../keys/ami-reg.pem
+
+suites:
+  - name: default
+    run_list:
+      - recipe[jenkin::default]
+    attributes:
+    jenkins:
+     http_proxy:
+      vairant: nginix
+
